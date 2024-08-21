@@ -1,0 +1,7 @@
+.categorie_togler{
+    display: flex;
+    flex-direction: column;
+}
+.togle{
+    margin: 5px;
+}

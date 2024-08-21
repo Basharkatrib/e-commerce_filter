@@ -1,17 +1,23 @@
-import './App.css';
-import { useState } from 'react';
-import Product from './components/Product/Product';
-import Categories from './components/Categories/Categories';
-import StoreContext from './hooks/storeContext';
-import Cart from './components/Cart/Cart';
+import { createContext, useState, useEffect } from 'react';
 
-function App() {
+const StoreContext = createContext({
+    filter: {
+        query: "/products?populate=*",
+        selectedCategories: []
+    },
+    setFilter: () => {},
+    cartItems: [],
+    addToCart: () => {},
+    removeFromCart: () => {}
+});
+
+export const StoreProvider = ({ children }) => {
     const [filter, setFilter] = useState({
         query: "/products?populate=*",
         selectedCategories: []
     });
 
-    // Initialize cartItems from localStorage
+    
     const [cartItems, setCartItems] = useState(() => {
         try {
             const savedCartItems = localStorage.getItem('cartItems');
@@ -34,15 +40,15 @@ function App() {
         localStorage.setItem('cartItems', JSON.stringify(updatedCartItems));
     };
 
+    useEffect(() => {
+        localStorage.setItem('cartItems', JSON.stringify(cartItems));
+    }, [cartItems]);
+
     return (
         <StoreContext.Provider value={{ filter, setFilter, cartItems, addToCart, removeFromCart }}>
-            <div className="App">
-                <Cart />
-                <Categories />
-                <Product />
-            </div>
+            {children}
         </StoreContext.Provider>
     );
-}
+};
 
-export default App;
+export default StoreContext;
